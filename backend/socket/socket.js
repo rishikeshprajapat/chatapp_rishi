@@ -3,12 +3,14 @@ import http from "http";
 import express from "express";
 
 const app = express();
+const client_url = process.env.CLIENT_URL;
 
 const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:8000"],
+		origin: ["http://localhost:8000", client_url],
 		methods: ["GET", "POST"],
+		credentials:true
 	},
 });
 
