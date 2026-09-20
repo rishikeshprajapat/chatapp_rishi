@@ -15,10 +15,12 @@ const connectDB = async () => {
 
   connectionPromise = (async () => {
   try {
-    const mongoUrl = process.env.MONGO_DB_URL;
+    const mongoUrl = process.env.MONGO_DB_URL || process.env.MONGODB_URI;
 
     if (mongoUrl && process.env.USE_MEMORY_DB !== "true") {
-      await mongoose.connect(mongoUrl);
+      await mongoose.connect(mongoUrl, {
+        serverSelectionTimeoutMS: 10000,
+      });
       console.log("connected to mongodb");
       return;
     }
@@ -34,6 +36,9 @@ const connectDB = async () => {
   } catch (error) {
     connectionPromise = undefined;
     console.log("Error connecting to mongodb", error.message);
+    if (error.code === "ENOTFOUND" || error.message.includes("querySrv")) {
+      console.log("Check the MongoDB Atlas connection string and cluster hostname configured in Render.");
+    }
     throw error;
   }
   })();
