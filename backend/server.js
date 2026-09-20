@@ -1,5 +1,5 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -11,8 +11,6 @@ import connectDB from "./dbs/mongoosedb.js";
 import { app, server } from "./socket/socket.js";
 //
 import path from "path";
-
-dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 //
@@ -45,14 +43,27 @@ app.use("/api/users", userRoutes);
 //
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-const startServer = async () => {
-  await connectDB();
-  server.listen(PORT, () => {
-    console.log(`server is running on port ${PORT}`);
-  });
+export const handler = async (req, res) => {
+  try {
+    await connectDB();
+    return app(req, res);
+  } catch (error) {
+    console.error("Request initialization failed:", error.message);
+    return res.status(500).json({ error: "Database connection failed" });
+  }
 };
 
-startServer().catch((error) => {
-  console.error("Server startup failed:", error.message);
-  process.exit(1);
-});
+if (!process.env.VERCEL) {
+  connectDB()
+    .then(() => {
+      server.listen(PORT, () => {
+        console.log(`server is running on port ${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Server startup failed:", error.message);
+      process.exit(1);
+    });
+}
+
+export default handler;

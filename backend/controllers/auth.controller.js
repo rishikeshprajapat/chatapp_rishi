@@ -7,6 +7,10 @@ import generateTokenAndSetCookie from "../utils/genetareToke.js";
 export const signup=async(req,res)=>{
    try{
     const {fullName,username,password,confirmPassword,gender}=req.body;
+
+    if(!fullName || !username || !password || !confirmPassword || !gender){
+        return res.status(400).json({error:"All fields are required"});
+    }
     
     if(password!==confirmPassword){
         return res.status(400).json({error:"Password don't match"});
@@ -69,6 +73,11 @@ else{
 export const login=async(req,res)=>{
     try {
         const{username,password}=req.body;
+
+        if(!username || !password){
+            return res.status(400).json({error:"Username and password are required"});
+        }
+
         const user=await User.findOne({username});
         const isPasswordCorrect=await bcrypt.compare(password,user?.password|| "");
         if(!user || !isPasswordCorrect){
