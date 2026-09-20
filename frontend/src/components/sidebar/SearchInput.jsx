@@ -11,17 +11,24 @@ const SearchInput = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (!search) return;
-		if (search.length < 3) {
-			return toast.error("Search term must be at least 3 characters long");
-		}
+		const normalizedSearch = search.trim();
+		if (!normalizedSearch) return;
 
-		const conversation = conversations.find((c) => c.fullName.toLowerCase().includes(search.toLowerCase()));
+		const conversation = conversations.find((c) => {
+			const fullName = c.fullName?.toLowerCase() || "";
+			const username = c.username?.toLowerCase() || "";
+			const query = normalizedSearch.toLowerCase();
+
+			return fullName.includes(query) || username.includes(query);
+		});
 
 		if (conversation) {
 			setSelectedConversation(conversation);
 			setSearch("");
-		} else toast.error("No such user found!");
+			return;
+		}
+
+		toast.error("No matching user found!");
 	};
 	return (
 		<form onSubmit={handleSubmit} className='flex items-center gap-2'>

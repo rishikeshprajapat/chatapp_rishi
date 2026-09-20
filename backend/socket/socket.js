@@ -4,13 +4,21 @@ import express from "express";
 
 const app = express();
 const client_url = process.env.CLIENT_URL;
+const allowedOrigins = ["http://localhost:5173", "http://localhost:8000", client_url].filter(Boolean);
 
 const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:8000", client_url],
+		origin: (origin, callback) => {
+			if (!origin || allowedOrigins.includes(origin)) {
+				callback(null, true);
+				return;
+			}
+
+			callback(new Error("Not allowed by CORS"));
+		},
 		methods: ["GET", "POST"],
-		credentials:true
+		credentials: true,
 	},
 });
 

@@ -12,6 +12,10 @@ const useLogin = () => {
 		if (!success) return;
 		setLoading(true);
 		try {
+			if (!backendUrl) {
+				throw new Error("VITE_API_URL is not configured");
+			}
+
 			const res = await fetch(`${backendUrl}/api/auth/login`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
