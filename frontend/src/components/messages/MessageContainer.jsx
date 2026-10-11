@@ -16,7 +16,7 @@ const MessageContainer = () => {
 	}, [setSelectedConversation]);
 
 	return (
-		<div className='flex flex-1 min-w-0 min-h-0 flex-col md:min-w-112.5'>
+		<div className='flex flex-1 min-w-0 min-h-0 flex-col lg:min-w-112.5'>
 			{!selectedConversation ? (
 				<NoChatSelected />
 			) : (
@@ -25,7 +25,7 @@ const MessageContainer = () => {
 					<div className='bg-slate-500 px-3 sm:px-4 py-2 mb-2 flex items-center gap-2 min-w-0'>
 						<button
 							type='button'
-							className='sm:hidden p-2 -ml-2'
+							className='lg:hidden p-2 -ml-2'
 							aria-label='Back to conversations'
 							onClick={() => setSelectedConversation(null)}
 						>
